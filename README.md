@@ -1,4 +1,4 @@
-# 📚 AI Fiction Writing System
+# 📚 Intelligent Author System
 This repository contains the complete codebase for an AI-powered fiction writing assistant. It's designed to help authors create detailed fictional worlds and narratives, leveraging Large Language Models (LLMs) and advanced data management techniques to ensure consistency, factuality, and a seamless writing experience.
 
 ## 🎯 Project Overview

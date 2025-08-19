@@ -1,5 +1,5 @@
 {
-  "name": "content-indexing-worker",
+  "name": "@intelligent-author-system/content-indexing-worker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

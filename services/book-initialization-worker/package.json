@@ -1,5 +1,5 @@
 {
-  "name": "book-initialization-worker",
+  "name": "@intelligent-author-system/book-initialization-worker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
