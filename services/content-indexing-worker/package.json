@@ -1,12 +1,20 @@
 {
   "name": "@intelligent-author-system/content-indexing-worker",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "private": true,
+  "description": "GCS-triggered Cloud Function to chunk markdown, embed with Vertex AI, and upsert to Vector Search.",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "start": "functions-framework --target=indexWorldData",
+    "lint": "echo \"No linter configured\"",
+    "test": "echo \"No tests configured\""
+  },
+  "dependencies": {
+    "@google-cloud/aiplatform": "^3.10.0",
+    "@google-cloud/functions-framework": "^3.4.0",
+    "@google-cloud/storage": "^7.10.0"
+  }
 }

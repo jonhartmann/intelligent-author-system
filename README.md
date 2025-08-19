@@ -25,11 +25,11 @@ This project uses a mono-repo setup, organizing all code into a single repositor
     * `./models/`: Common data models (e.g., Pub/Sub message payloads, Firestore document schemas).
     * `./utils/`: Generic utility functions (e.g., GCS path builders, common error handling).
 * `./services/`: Contains independent backend services. Each subdirectory is a separate Node.js application, managed as an npm/Yarn/pnpm workspace.
-    * `./api-layer/`: The HTTP entry point. Handles user authentication (Firebase), validates requests, and publishes messages to Pub/Sub.
+    * `./api/`: The HTTP entry point. Handles user authentication (Firebase), validates requests, and publishes messages to Pub/Sub.
     * `./world-building-agent/`: A Cloud Run Job triggered by Pub/Sub. Generates world lore, leverages RAG, and saves to GCS.
-    * `./indexing-worker/`: A Cloud Function triggered by GCS object finalization. Processes new/updated Markdown files, generates embeddings, and ingests them into Vertex AI Vector Search.
-    * `./character-agent/`: Another Cloud Run Job for generating character details.
-    * `...`: Other planned agents (e.g., chapter-generation-agent/, editing-agent/).
+    * `./content-indexing-worker/`: A Cloud Function triggered by GCS object finalization. Processes new/updated Markdown files, generates embeddings, and ingests them into Vertex AI Vector Search.
+    * `./book-initialization-worker/`: A Cloud Function triggered by GCS object finalization
+    * `...`: Other planned agents (e.g., `chapter-generation-agent/`, `editing-agent/`, `character-agent/`).
 * `./ui/`: The frontend web application (e.g., React, Vue). Users interact with this via Firebase Hosting.
 
 ## 💡 Core Architectural Concepts
@@ -53,7 +53,7 @@ User requests (e.g., "Generate Chapter") are immediately acknowledged by the API
 ### Retrieval-Augmented Generation (RAG)
 RAG is critical for grounding the AI's responses in your specific fictional universe, preventing "hallucinations."
 
-1. **Indexing (Cloud Function `indexing-worker`):** When you save or update Markdown files in GCS (e.g., story_data/world_data/*.md), a GCS trigger invokes the indexing-worker Cloud Function. This function:
+1. **Indexing (Cloud Function `content-indexing-worker`):** When you save or update Markdown files in GCS (e.g., story_data/world_data/*.md), a GCS trigger invokes the content-indexing-worker Cloud Function. This function:
     * Reads the Markdown file.
     * Chunks the content into smaller, semantically meaningful pieces.
     * Uses **Vertex AI Embedding Models** (e.g., `text-embedding-004`) to convert each text chunk into a high-dimensional vector (embedding).
@@ -97,7 +97,7 @@ The system is designed to securely handle multiple users and their distinct proj
 ### Mono-repo with Workspaces
 This project uses npm/Yarn/pnpm workspaces to manage multiple `package.json` files within a single repository.
 * Root `package.json`: Defines the `workspaces` (e.g., `services/*`, `ui`). It typically has `private: true` to prevent accidental publishing.
-* Child `package.json`s: Each service (`services/api-layer/`, `ui/`, `shared/utils/`) has its own `package.json`, listing only its specific dependencies and scripts (start, test, build).
+* Child `package.json`s: Each service (`services/api/`, `ui/`, `shared/utils/`) has its own `package.json`, listing only its specific dependencies and scripts (start, test, build).
 * **Benefits:** Isolates dependencies, enables independent scripting, streamlines deployment of individual services, and allows for shared code packages (e.g., `@your-monorepo-scope/utils`) that can be imported by other services.
 
 ## 💻 Local Development Setup
@@ -131,7 +131,7 @@ This will install dependencies for all workspaces.
 
 6. **Create Local `.env` Files:**
 
-* For each service (`services/api-layer/`, `services/world-building-agent/`, etc.) and the `ui/` folder, copy its `.env.example` file to `.env`.
+* For each service (`services/api/`, `services/world-building-agent/`, etc.) and the `ui/` folder, copy its `.env.example` file to `.env`.
 * Edit each `.env` file to configure local paths and emulator addresses.
     * `FICTION_BASE_ROOT`: Set this in your system environment or a `.env` file at the mono-repo root (if you create one) and then ensure it's picked up by the individual service's `.env` (e.g., by sourcing it). For services, you might specify a local temp directory like `/tmp/my_fiction_projects`.
     * `GOOGLE_CLOUD_PROJECT`: Your GCP Project ID.
@@ -141,7 +141,7 @@ This will install dependencies for all workspaces.
 7. **Run Services:**
     * In separate terminal windows, navigate to each service directory and start it:
     ```
-    cd services/api-layer/
+    cd services/api/
     npm start # or node src/index.js
     ```
     ```
@@ -153,7 +153,7 @@ This will install dependencies for all workspaces.
     npm start
     ```
 
-8. **Manual Cloud Function Testing:** For GCS-triggered Cloud Functions (indexing-worker), you'll likely need to manually trigger them locally (using gcloud functions deploy --trigger-topic or a local HTTP trigger if you modify it for that) or deploy them to a development GCP project for testing.
+8. **Manual Cloud Function Testing:** For GCS-triggered Cloud Functions (content-indexing-worker), you'll likely need to manually trigger them locally (using gcloud functions deploy --trigger-topic or a local HTTP trigger if you modify it for that) or deploy them to a development GCP project for testing.
 
 ## 🚀 Deployment (CI/CD)
 The project leverages GitHub Actions (or Cloud Build) for continuous integration and deployment to GCP.

@@ -1,0 +1,13 @@
+project_id               = "your-gcp-project-id"
+region                   = "us-central1"
+location                 = "us-central1"
+content_bucket_name      = "your-project-fiction-data"
+gcs_lifecycle_noncurrent_days = 90
+
+# Optional images (set null to skip creating these)
+api_service_image        = null # e.g., "us-central1-docker.pkg.dev/your-proj/your-repo/api:latest"
+world_building_job_image = null # e.g., "us-central1-docker.pkg.dev/your-proj/your-repo/world-agent:latest"
+
+# Cloud Function source (zip uploaded to a bucket)
+function_source_bucket   = null # e.g., "your-function-source-bucket"
+function_source_object   = null # e.g., "content-indexing-worker.zip"
