@@ -1,0 +1,22 @@
+{
+  "name": "intelligent-author-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An AI assisted workflow for developing written works.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+   "workspaces": [
+    "services/*",
+    "user-interface"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:all": "npm install",
+    "start:api": "npm --workspace services/api-layer start",
+    "test:all": "npm test --workspaces"
+  },
+  "author": "",
+  "license": "ISC"
+}
